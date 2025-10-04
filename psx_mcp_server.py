@@ -157,7 +157,7 @@ class PSXClient:
 psx_client = PSXClient()
 
 @mcp.tool()
-async def get_market_watch() -> str:
+async def market_data() -> str:
     """
     Get current market watch data for all stocks listed on PSX.
     
@@ -174,7 +174,7 @@ async def get_market_watch() -> str:
         return json.dumps({"error": str(e)})
 
 @mcp.tool()
-async def get_stock_intraday_data(symbol: str) -> str:
+async def intraday(symbol: str) -> str:
     """
     Get intraday time series data for a specific stock.
     
@@ -194,7 +194,7 @@ async def get_stock_intraday_data(symbol: str) -> str:
         return json.dumps({"error": str(e)})
 
 @mcp.tool()
-async def get_stock_eod_data(symbol: str) -> str:
+async def history(symbol: str) -> str:
     """
     Get end-of-day time series data for a specific stock (past 5 years).
     
@@ -215,7 +215,7 @@ async def get_stock_eod_data(symbol: str) -> str:
         return json.dumps({"error": str(e)})
 
 @mcp.tool()
-async def search_stocks_by_sector(sector: str) -> str:
+async def sector(sector: str) -> str:
     """
     Search for stocks by sector from the market watch data.
     
@@ -236,7 +236,7 @@ async def search_stocks_by_sector(sector: str) -> str:
         return json.dumps({"error": str(e)})
 
 @mcp.tool()
-async def get_top_gainers(limit: int = 10) -> str:
+async def gainers(limit: int = 10) -> str:
     """
     Get top gaining stocks from market watch data.
     
@@ -259,7 +259,7 @@ async def get_top_gainers(limit: int = 10) -> str:
         return json.dumps({"error": str(e)})
 
 @mcp.tool()
-async def get_top_losers(limit: int = 10) -> str:
+async def losers(limit: int = 10) -> str:
     """
     Get top losing stocks from market watch data.
     
@@ -281,7 +281,7 @@ async def get_top_losers(limit: int = 10) -> str:
         return json.dumps({"error": str(e)})
 
 @mcp.tool()
-async def get_eod_data_by_date_range(symbol: str, start_date: str, end_date: str) -> str:
+async def date_range(symbol: str, start_date: str, end_date: str) -> str:
     """
     Get end-of-day data for a specific stock within a date range.
     
@@ -317,7 +317,7 @@ async def get_eod_data_by_date_range(symbol: str, start_date: str, end_date: str
         return json.dumps({"error": str(e)})
 
 @mcp.tool()
-async def get_intraday_data_by_time_range(symbol: str, start_time: str, end_time: str) -> str:
+async def time_range(symbol: str, start_time: str, end_time: str) -> str:
     """
     Get intraday data for a specific stock within a time range.
     
@@ -353,7 +353,7 @@ async def get_intraday_data_by_time_range(symbol: str, start_time: str, end_time
         return json.dumps({"error": str(e)})
 
 @mcp.tool()
-async def get_ohlcv_data(symbol: str) -> str:
+async def ohlcv(symbol: str) -> str:
     """
     Get OHLCV (Open, High, Low, Close, Volume) data for a specific stock.
     
@@ -395,7 +395,7 @@ async def get_ohlcv_data(symbol: str) -> str:
         return json.dumps({"error": str(e)})
 
 @mcp.tool()
-async def get_multiple_stocks_ohlcv(symbols: str) -> str:
+async def multi_ohlcv(symbols: str) -> str:
     """
     Get OHLCV data for multiple stocks at once.
     
@@ -439,7 +439,7 @@ async def get_multiple_stocks_ohlcv(symbols: str) -> str:
         return json.dumps({"error": str(e)})
 
 @mcp.tool()
-async def get_stock_price_at_time(symbol: str, timestamp: int) -> str:
+async def price_at_time(symbol: str, timestamp: int) -> str:
     """
     Get the closest price data for a stock at a specific timestamp.
     
@@ -468,7 +468,7 @@ async def get_stock_price_at_time(symbol: str, timestamp: int) -> str:
         return json.dumps({"error": str(e)})
 
 @mcp.tool()
-async def get_volume_analysis(symbol: str, days: int = 30) -> str:
+async def volume_analysis(symbol: str, days: int = 30) -> str:
     """
     Analyze volume patterns for a stock over a specified number of days.
     
