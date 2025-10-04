@@ -24,6 +24,7 @@ This MCP server provides **12 powerful tools** for comprehensive PSX data access
 
 ## Installation
 
+### Option 1: Direct Installation
 1. Install dependencies:
 ```bash
 pip install -r requirements.txt
@@ -31,7 +32,43 @@ pip install -r requirements.txt
 
 2. Run the MCP server:
 ```bash
-python psx_mcp_server.py
+python scripts/start_server.py
+```
+
+### Option 2: Development Installation
+1. Install with development tools:
+```bash
+make setup
+# or
+pip install -e ".[dev]"
+```
+
+2. Run with Makefile:
+```bash
+make run-server
+```
+
+### Option 3: Docker
+1. Build the Docker image:
+```bash
+docker build -t psx-mcp-server .
+```
+
+2. Run the container:
+```bash
+docker run -it psx-mcp-server
+```
+
+## Development
+
+### Available Commands
+```bash
+make help          # Show all available commands
+make test          # Run test suite
+make lint          # Run linting checks
+make format        # Format code with black
+make run-demo      # Run demonstrations
+make clean         # Clean build artifacts
 ```
 
 ## Data Sources

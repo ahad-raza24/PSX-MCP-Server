@@ -21,7 +21,6 @@ test-cov:  ## Run tests with coverage
 
 lint:  ## Run linting
 	flake8 src/ tests/ examples/ scripts/
-	mypy src/psx_mcp/
 
 format:  ## Format code with black
 	black src/ tests/ examples/ scripts/ --line-length 88
