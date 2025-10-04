@@ -2,8 +2,7 @@
   "mcpServers": {
     "psx-scraper": {
       "command": "python",
-      "args": ["scripts/start_server.py"],
-      "cwd": "/Users/ahadraza/AISkillBridge/MCP",
+      "args": ["/Users/ahadraza/AISkillBridge/MCP/scripts/start_server.py"],
       "env": {
         "PYTHONPATH": "/Users/ahadraza/AISkillBridge/MCP/src"
       }
