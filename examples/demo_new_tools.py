@@ -5,8 +5,14 @@ Demo script to test all the new advanced PSX MCP Server tools
 
 import asyncio
 import json
-from psx_mcp_server import PSXClient
+import sys
+import os
 from datetime import datetime, timedelta
+
+# Add src to path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+
+from psx_mcp.client import PSXClient
 
 async def demo_new_tools():
     """Demonstrate all the new advanced tools"""

@@ -5,7 +5,13 @@ Demo script to show PSX MCP Server functionality
 
 import asyncio
 import json
-from psx_mcp_server import PSXClient
+import sys
+import os
+
+# Add src to path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+
+from psx_mcp.client import PSXClient
 
 async def demo_psx_data():
     """Demonstrate PSX data fetching capabilities"""

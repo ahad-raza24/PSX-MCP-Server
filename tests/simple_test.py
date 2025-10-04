@@ -5,7 +5,13 @@ Simple test to verify PSX MCP Server functionality
 
 import asyncio
 import json
-from psx_mcp_server import PSXClient
+import sys
+import os
+
+# Add src to path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+
+from psx_mcp.client import PSXClient
 
 async def test_psx_client():
     """Test PSXClient functionality"""
@@ -50,7 +56,7 @@ def test_data_models():
     """Test Pydantic data models"""
     print("\nTesting data models...")
     
-    from psx_mcp_server import StockData, TimeSeriesData
+    from psx_mcp.models import StockData, TimeSeriesData
     
     # Test StockData
     stock = StockData(
@@ -85,7 +91,7 @@ def test_mcp_server_import():
     print("\nTesting MCP server import...")
     
     try:
-        from psx_mcp_server import mcp
+        from psx_mcp.server import mcp
         print(f"✅ MCP server imported: {mcp.name}")
         print("🎉 MCP server import test passed!")
     except Exception as e:

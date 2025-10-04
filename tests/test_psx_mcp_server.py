@@ -7,9 +7,17 @@ Tests all tools and functionality
 import pytest
 import asyncio
 import json
+import sys
+import os
 from unittest.mock import Mock, AsyncMock, patch
 import httpx
-from psx_mcp_server import PSXClient, mcp, StockData, TimeSeriesData
+
+# Add src to path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+
+from psx_mcp.client import PSXClient
+from psx_mcp.models import StockData, TimeSeriesData
+from psx_mcp.server import mcp
 
 class TestPSXClient:
     """Test the PSXClient class"""

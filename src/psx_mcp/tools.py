@@ -1,162 +1,18 @@
-#!/usr/bin/env python3
 """
-PSX MCP Server - Pakistan Stock Exchange Data Scraper
-Provides tools to fetch market data from PSX website
+MCP Tools for PSX data access
 """
 
 import json
 import asyncio
-from typing import List, Dict, Any, Optional
-from datetime import datetime
-import httpx
-from fastmcp import FastMCP
-from pydantic import BaseModel, Field
+from typing import List, Dict, Any
+from datetime import datetime, timedelta
+from .client import PSXClient
 
-# Initialize the MCP server
-mcp = FastMCP("PSX Data Scraper")
-
-class StockData(BaseModel):
-    """Model for stock market data"""
-    symbol: str
-    sector: str
-    listed_in: str
-    ldcp: float
-    open_price: float
-    high_price: float
-    low_price: float
-    current_price: float
-    change: float
-    change_percent: float
-    volume: int
-
-class TimeSeriesData(BaseModel):
-    """Model for time series data points"""
-    timestamp: int
-    price: float
-    volume: int
-    open_price: Optional[float] = None
-
-class PSXClient:
-    """Client for fetching data from PSX website"""
-    
-    def __init__(self):
-        self.base_url = "https://dps.psx.com.pk"
-        self.client = httpx.AsyncClient(timeout=30.0)
-    
-    async def get_market_watch_data(self) -> List[Dict[str, Any]]:
-        """Fetch market watch data for all stocks"""
-        try:
-            response = await self.client.get(f"{self.base_url}/market-watch")
-            response.raise_for_status()
-            
-            # PSX returns HTML table, not JSON
-            # For now, return a mock response since we need HTML parsing
-            # In a real implementation, you would parse the HTML table
-            
-            # Mock data structure based on the HTML table format
-            mock_stocks = [
-                {
-                    "symbol": "HBL",
-                    "sector": "Banking",
-                    "listed_in": "Main Board", 
-                    "ldcp": 300.87,
-                    "open_price": 301.0,
-                    "high_price": 302.0,
-                    "low_price": 299.0,
-                    "current_price": 300.87,
-                    "change": 0.0,
-                    "change_percent": 0.0,
-                    "volume": 2024970
-                },
-                {
-                    "symbol": "OGDC",
-                    "sector": "Oil & Gas",
-                    "listed_in": "Main Board",
-                    "ldcp": 120.50,
-                    "open_price": 121.0,
-                    "high_price": 122.0,
-                    "low_price": 119.0,
-                    "current_price": 120.50,
-                    "change": 0.0,
-                    "change_percent": 0.0,
-                    "volume": 1500000
-                }
-            ]
-            
-            return mock_stocks
-            
-        except Exception as e:
-            raise Exception(f"Failed to fetch market watch data: {str(e)}")
-    
-    async def get_intraday_data(self, symbol: str) -> List[Dict[str, Any]]:
-        """Fetch intraday time series data for a specific stock"""
-        try:
-            response = await self.client.get(f"{self.base_url}/timeseries/int/{symbol}")
-            response.raise_for_status()
-            
-            data = response.json()
-            
-            # PSX returns {"status": 1, "message": "", "data": [...]}
-            if isinstance(data, dict) and data.get("status") == 1 and "data" in data:
-                raw_data = data["data"]
-            else:
-                raw_data = data
-            
-            # Convert to our format
-            intraday_data = []
-            for item in raw_data:
-                if len(item) >= 3:
-                    time_point = TimeSeriesData(
-                        timestamp=item[0],
-                        price=float(item[1]),
-                        volume=int(item[2])
-                    )
-                    intraday_data.append(time_point.model_dump())
-            
-            return intraday_data
-            
-        except Exception as e:
-            raise Exception(f"Failed to fetch intraday data for {symbol}: {str(e)}")
-    
-    async def get_eod_data(self, symbol: str) -> List[Dict[str, Any]]:
-        """Fetch end-of-day time series data for a specific stock"""
-        try:
-            response = await self.client.get(f"{self.base_url}/timeseries/eod/{symbol}")
-            response.raise_for_status()
-            
-            data = response.json()
-            
-            # PSX returns {"status": 1, "message": "", "data": [...]}
-            if isinstance(data, dict) and data.get("status") == 1 and "data" in data:
-                raw_data = data["data"]
-            else:
-                raw_data = data
-            
-            # Convert to our format
-            eod_data = []
-            for item in raw_data:
-                if len(item) >= 4:
-                    time_point = TimeSeriesData(
-                        timestamp=item[0],
-                        price=float(item[1]),
-                        volume=int(item[2]),
-                        open_price=float(item[3])
-                    )
-                    eod_data.append(time_point.model_dump())
-            
-            return eod_data
-            
-        except Exception as e:
-            raise Exception(f"Failed to fetch EOD data for {symbol}: {str(e)}")
-    
-    async def close(self):
-        """Close the HTTP client"""
-        await self.client.aclose()
 
 # Initialize the PSX client
 psx_client = PSXClient()
 
-@mcp.tool()
+
 async def market_data() -> str:
     """
     Get current market watch data for all stocks listed on PSX.
@@ -173,7 +29,7 @@ async def market_data() -> str:
     except Exception as e:
         return json.dumps({"error": str(e)})
 
-@mcp.tool()
+
 async def intraday(symbol: str) -> str:
     """
     Get intraday time series data for a specific stock.
@@ -193,7 +49,7 @@ async def intraday(symbol: str) -> str:
     except Exception as e:
         return json.dumps({"error": str(e)})
 
-@mcp.tool()
+
 async def history(symbol: str) -> str:
     """
     Get end-of-day time series data for a specific stock (past 5 years).
@@ -214,7 +70,7 @@ async def history(symbol: str) -> str:
     except Exception as e:
         return json.dumps({"error": str(e)})
 
-@mcp.tool()
+
 async def sector(sector: str) -> str:
     """
     Search for stocks by sector from the market watch data.
@@ -235,7 +91,7 @@ async def sector(sector: str) -> str:
     except Exception as e:
         return json.dumps({"error": str(e)})
 
-@mcp.tool()
+
 async def gainers(limit: int = 10) -> str:
     """
     Get top gaining stocks from market watch data.
@@ -258,7 +114,7 @@ async def gainers(limit: int = 10) -> str:
     except Exception as e:
         return json.dumps({"error": str(e)})
 
-@mcp.tool()
+
 async def losers(limit: int = 10) -> str:
     """
     Get top losing stocks from market watch data.
@@ -280,7 +136,7 @@ async def losers(limit: int = 10) -> str:
     except Exception as e:
         return json.dumps({"error": str(e)})
 
-@mcp.tool()
+
 async def date_range(symbol: str, start_date: str, end_date: str) -> str:
     """
     Get end-of-day data for a specific stock within a date range.
@@ -294,9 +150,6 @@ async def date_range(symbol: str, start_date: str, end_date: str) -> str:
         JSON string containing EOD data within the specified date range
     """
     try:
-        from datetime import datetime
-        import time
-        
         # Convert dates to timestamps
         start_dt = datetime.strptime(start_date, "%Y-%m-%d")
         end_dt = datetime.strptime(end_date, "%Y-%m-%d")
@@ -316,7 +169,7 @@ async def date_range(symbol: str, start_date: str, end_date: str) -> str:
     except Exception as e:
         return json.dumps({"error": str(e)})
 
-@mcp.tool()
+
 async def time_range(symbol: str, start_time: str, end_time: str) -> str:
     """
     Get intraday data for a specific stock within a time range.
@@ -330,9 +183,6 @@ async def time_range(symbol: str, start_time: str, end_time: str) -> str:
         JSON string containing intraday data within the specified time range
     """
     try:
-        from datetime import datetime
-        import time
-        
         # Convert times to timestamps
         start_dt = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
         end_dt = datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S")
@@ -352,7 +202,7 @@ async def time_range(symbol: str, start_time: str, end_time: str) -> str:
     except Exception as e:
         return json.dumps({"error": str(e)})
 
-@mcp.tool()
+
 async def ohlcv(symbol: str) -> str:
     """
     Get OHLCV (Open, High, Low, Close, Volume) data for a specific stock.
@@ -394,7 +244,7 @@ async def ohlcv(symbol: str) -> str:
     except Exception as e:
         return json.dumps({"error": str(e)})
 
-@mcp.tool()
+
 async def multi_ohlcv(symbols: str) -> str:
     """
     Get OHLCV data for multiple stocks at once.
@@ -438,7 +288,7 @@ async def multi_ohlcv(symbols: str) -> str:
     except Exception as e:
         return json.dumps({"error": str(e)})
 
-@mcp.tool()
+
 async def price_at_time(symbol: str, timestamp: int) -> str:
     """
     Get the closest price data for a stock at a specific timestamp.
@@ -467,7 +317,7 @@ async def price_at_time(symbol: str, timestamp: int) -> str:
     except Exception as e:
         return json.dumps({"error": str(e)})
 
-@mcp.tool()
+
 async def volume_analysis(symbol: str, days: int = 30) -> str:
     """
     Analyze volume patterns for a stock over a specified number of days.
@@ -480,8 +330,6 @@ async def volume_analysis(symbol: str, days: int = 30) -> str:
         JSON string containing volume analysis statistics
     """
     try:
-        from datetime import datetime, timedelta
-        
         # Calculate date range
         end_date = datetime.now()
         start_date = end_date - timedelta(days=days)
@@ -526,13 +374,3 @@ async def volume_analysis(symbol: str, days: int = 30) -> str:
         return json.dumps(analysis, indent=2)
     except Exception as e:
         return json.dumps({"error": str(e)})
-
-async def cleanup():
-    """Cleanup function to close HTTP client"""
-    await psx_client.close()
-
-# Note: FastMCP handles cleanup automatically when the server shuts down
-
-if __name__ == "__main__":
-    # Run the MCP server
-    mcp.run()
