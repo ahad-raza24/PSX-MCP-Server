@@ -180,7 +180,7 @@ class TestMCPTools:
     async def test_get_market_watch_tool_success(self):
         """Test get_market_watch tool success"""
         # Import the actual tool function
-        from psx_mcp_server import get_market_watch
+        from psx_mcp.tools import market_data as get_market_watch
         
         mock_data = [
             {
@@ -209,7 +209,7 @@ class TestMCPTools:
     @pytest.mark.asyncio
     async def test_get_market_watch_tool_failure(self):
         """Test get_market_watch tool failure"""
-        from psx_mcp_server import get_market_watch
+        from psx_mcp.tools import market_data as get_market_watch
         
         with patch('psx_mcp_server.psx_client.get_market_watch_data', side_effect=Exception("API Error")):
             result = await get_market_watch()
@@ -221,7 +221,7 @@ class TestMCPTools:
     @pytest.mark.asyncio
     async def test_get_stock_intraday_data_tool_success(self):
         """Test get_stock_intraday_data tool success"""
-        from psx_mcp_server import get_stock_intraday_data
+        from psx_mcp.tools import intraday as get_stock_intraday_data
         
         mock_data = [
             {"timestamp": 1759491298, "price": 300.87, "volume": 1000},
@@ -239,7 +239,7 @@ class TestMCPTools:
     @pytest.mark.asyncio
     async def test_get_stock_intraday_data_tool_failure(self):
         """Test get_stock_intraday_data tool failure"""
-        from psx_mcp_server import get_stock_intraday_data
+        from psx_mcp.tools import intraday as get_stock_intraday_data
         
         with patch('psx_mcp_server.psx_client.get_intraday_data', side_effect=Exception("API Error")):
             result = await get_stock_intraday_data("INVALID")
@@ -251,7 +251,7 @@ class TestMCPTools:
     @pytest.mark.asyncio
     async def test_get_stock_eod_data_tool_success(self):
         """Test get_stock_eod_data tool success"""
-        from psx_mcp_server import get_stock_eod_data
+        from psx_mcp.tools import history as get_stock_eod_data
         
         mock_data = [
             {"timestamp": 1759489200, "price": 300.87, "volume": 2024970, "open_price": 305},
@@ -270,7 +270,7 @@ class TestMCPTools:
     @pytest.mark.asyncio
     async def test_get_stock_eod_data_tool_failure(self):
         """Test get_stock_eod_data tool failure"""
-        from psx_mcp_server import get_stock_eod_data
+        from psx_mcp.tools import history as get_stock_eod_data
         
         with patch('psx_mcp_server.psx_client.get_eod_data', side_effect=Exception("API Error")):
             result = await get_stock_eod_data("INVALID")
@@ -282,7 +282,7 @@ class TestMCPTools:
     @pytest.mark.asyncio
     async def test_search_stocks_by_sector_success(self):
         """Test search_stocks_by_sector tool success"""
-        from psx_mcp_server import search_stocks_by_sector
+        from psx_mcp.tools import sector as search_stocks_by_sector
         
         mock_data = [
             {"symbol": "HBL", "sector": "Banking", "current_price": 101.5},
@@ -301,7 +301,7 @@ class TestMCPTools:
     @pytest.mark.asyncio
     async def test_get_top_gainers_success(self):
         """Test get_top_gainers tool success"""
-        from psx_mcp_server import get_top_gainers
+        from psx_mcp.tools import gainers as get_top_gainers
         
         mock_data = [
             {"symbol": "STOCK1", "change_percent": 5.5},
@@ -323,7 +323,7 @@ class TestMCPTools:
     @pytest.mark.asyncio
     async def test_get_top_losers_success(self):
         """Test get_top_losers tool success"""
-        from psx_mcp_server import get_top_losers
+        from psx_mcp.tools import losers as get_top_losers
         
         mock_data = [
             {"symbol": "STOCK1", "change_percent": 5.5},
@@ -472,13 +472,13 @@ def test_mcp_server_initialization():
 
 def test_server_import():
     """Test that the server can be imported and basic functions exist"""
-    from psx_mcp_server import (
-        get_market_watch,
-        get_stock_intraday_data,
-        get_stock_eod_data,
-        search_stocks_by_sector,
-        get_top_gainers,
-        get_top_losers
+    from psx_mcp.tools import (
+        market_data as get_market_watch,
+        intraday as get_stock_intraday_data,
+        history as get_stock_eod_data,
+        sector as search_stocks_by_sector,
+        gainers as get_top_gainers,
+        losers as get_top_losers
     )
     
     # Check that all functions are callable
