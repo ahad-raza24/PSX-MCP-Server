@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field
 
 class StockData(BaseModel):
     """Model for stock market data"""
+
     symbol: str = Field(..., description="Stock symbol")
     sector: str = Field(..., description="Sector name")
     listed_in: str = Field(..., description="Board listing")
@@ -23,14 +24,18 @@ class StockData(BaseModel):
 
 class TimeSeriesData(BaseModel):
     """Model for time series data points"""
+
     timestamp: int = Field(..., description="Unix timestamp")
     price: float = Field(..., description="Price at timestamp")
     volume: int = Field(..., description="Volume at timestamp")
-    open_price: Optional[float] = Field(None, description="Opening price (for EOD data)")
+    open_price: Optional[float] = Field(
+        None, description="Opening price (for EOD data)"
+    )
 
 
 class VolumeAnalysis(BaseModel):
     """Model for volume analysis results"""
+
     symbol: str = Field(..., description="Stock symbol")
     period_days: int = Field(..., description="Analysis period in days")
     data_points: int = Field(..., description="Number of data points")

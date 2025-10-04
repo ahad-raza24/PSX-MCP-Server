@@ -17,7 +17,7 @@ from .tools import (
     ohlcv,
     multi_ohlcv,
     price_at_time,
-    volume_analysis
+    volume_analysis,
 )
 
 # Initialize the MCP server

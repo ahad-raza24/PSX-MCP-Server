@@ -5,12 +5,11 @@ Start script for PSX MCP Server
 
 import sys
 import os
-import asyncio
 
 # Add src to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
-from psx_mcp.server import mcp
+from psx_mcp.server import mcp  # noqa: E402
 
 
 def main():
@@ -20,7 +19,7 @@ def main():
     print("🔧 Available tools: 12")
     print("📊 Data source: Pakistan Stock Exchange")
     print("-" * 50)
-    
+
     try:
         mcp.run()
     except KeyboardInterrupt:
