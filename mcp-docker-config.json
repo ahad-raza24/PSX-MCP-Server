@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "psx-scraper-docker": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "psx-mcp-server"
+      ]
+    }
+  }
+}

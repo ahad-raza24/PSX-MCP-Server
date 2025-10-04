@@ -29,8 +29,8 @@ RUN useradd --create-home --shell /bin/bash app \
     && chown -R app:app /app
 USER app
 
-# Expose port (if needed for future HTTP transport)
-EXPOSE 8000
+# Expose port for MCP communication
+EXPOSE 3000
 
 # Set the default command
 CMD ["python", "scripts/start_server.py"]
