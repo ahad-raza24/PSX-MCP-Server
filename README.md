@@ -2,6 +2,12 @@
 
 A Model Context Protocol (MCP) server that provides tools to scrape and access Pakistan Stock Exchange (PSX) market data.
 
+## 🎥 Demo Video
+
+![PSX MCP Server Demo](assets/PSX_MCPServer%20Demo%20-%20Ahad.mov)
+
+*Watch this demo to see the PSX MCP Server in action with real-time market data!*
+
 ## Features
 
 This MCP server provides **12 powerful tools** for comprehensive PSX data access:

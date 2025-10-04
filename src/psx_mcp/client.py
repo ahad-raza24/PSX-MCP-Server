@@ -4,6 +4,8 @@ PSX API Client for fetching market data
 
 import httpx
 from typing import List, Dict, Any
+from bs4 import BeautifulSoup
+import re
 from .models import TimeSeriesData
 
 
@@ -20,44 +22,65 @@ class PSXClient:
             response = await self.client.get(f"{self.base_url}/market-watch")
             response.raise_for_status()
 
-            # PSX returns HTML table, not JSON
-            # For now, return a mock response since we need HTML parsing
-            # In a real implementation, you would parse the HTML table
+            # Parse HTML response
+            soup = BeautifulSoup(response.text, 'html.parser')
+            
+            # Find the market data table
+            table = soup.find('table', {'id': 'marketWatchTable'}) or soup.find('table')
+            if not table:
+                raise Exception("Market data table not found in HTML response")
 
-            # Mock data structure based on the HTML table format
-            mock_stocks = [
-                {
-                    "symbol": "HBL",
-                    "sector": "Banking",
-                    "listed_in": "Main Board",
-                    "ldcp": 300.87,
-                    "open_price": 301.0,
-                    "high_price": 302.0,
-                    "low_price": 299.0,
-                    "current_price": 300.87,
-                    "change": 0.0,
-                    "change_percent": 0.0,
-                    "volume": 2024970,
-                },
-                {
-                    "symbol": "OGDC",
-                    "sector": "Oil & Gas",
-                    "listed_in": "Main Board",
-                    "ldcp": 120.50,
-                    "open_price": 121.0,
-                    "high_price": 122.0,
-                    "low_price": 119.0,
-                    "current_price": 120.50,
-                    "change": 0.0,
-                    "change_percent": 0.0,
-                    "volume": 1500000,
-                },
-            ]
+            stocks = []
+            rows = table.find_all('tr')[1:]  # Skip header row
+            
+            for row in rows:
+                cells = row.find_all(['td', 'th'])
+                if len(cells) >= 9:  # Ensure we have enough columns
+                    try:
+                        stock_data = {
+                            "symbol": cells[0].get_text(strip=True),
+                            "sector": cells[1].get_text(strip=True),
+                            "listed_in": cells[2].get_text(strip=True),
+                            "ldcp": self._parse_float(cells[3].get_text(strip=True)),
+                            "open_price": self._parse_float(cells[4].get_text(strip=True)),
+                            "high_price": self._parse_float(cells[5].get_text(strip=True)),
+                            "low_price": self._parse_float(cells[6].get_text(strip=True)),
+                            "current_price": self._parse_float(cells[7].get_text(strip=True)),
+                            "change": self._parse_float(cells[8].get_text(strip=True)),
+                            "change_percent": self._parse_float(cells[9].get_text(strip=True)) if len(cells) > 9 else 0.0,
+                            "volume": self._parse_int(cells[10].get_text(strip=True)) if len(cells) > 10 else 0,
+                        }
+                        stocks.append(stock_data)
+                    except (ValueError, IndexError) as e:
+                        # Skip rows with invalid data
+                        continue
 
-            return mock_stocks
+            return stocks
 
         except Exception as e:
             raise Exception(f"Failed to fetch market watch data: {str(e)}")
+
+    def _parse_float(self, text: str) -> float:
+        """Parse float value from text, handling commas and other formatting"""
+        if not text or text == '-':
+            return 0.0
+        # Remove commas and other formatting
+        cleaned = re.sub(r'[^\d.-]', '', text)
+        try:
+            return float(cleaned)
+        except ValueError:
+            return 0.0
+
+    def _parse_int(self, text: str) -> int:
+        """Parse integer value from text, handling commas and other formatting"""
+        if not text or text == '-':
+            return 0
+        # Remove commas and other formatting
+        cleaned = re.sub(r'[^\d]', '', text)
+        try:
+            return int(cleaned)
+        except ValueError:
+            return 0
 
     async def get_intraday_data(self, symbol: str) -> List[Dict[str, Any]]:
         """Fetch intraday time series data for a specific stock"""
