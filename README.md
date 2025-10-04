@@ -30,7 +30,13 @@ This MCP server provides **12 powerful tools** for comprehensive PSX data access
 pip install -r requirements.txt
 ```
 
-2. Run the MCP server:
+2. Configure Gemini CLI (copy and customize the template):
+```bash
+cp gemini_config.template.json gemini_config.json
+# Edit gemini_config.json with your project path
+```
+
+3. Run the MCP server:
 ```bash
 python scripts/start_server.py
 ```
@@ -57,6 +63,40 @@ docker build -t psx-mcp-server .
 2. Run the container:
 ```bash
 docker run -it psx-mcp-server
+```
+
+## Configuration
+
+### Template Files
+The project includes template configuration files for easy setup:
+
+- **`gemini_config.template.json`** - Simple Gemini CLI configuration template
+- **`mcp_config.template.json`** - Advanced MCP configuration template with additional settings
+
+### Quick Setup
+1. Copy the template file:
+```bash
+cp gemini_config.template.json gemini_config.json
+```
+
+2. Edit the configuration with your project path:
+```json
+{
+  "mcpServers": {
+    "psx-scraper": {
+      "command": "python",
+      "args": ["/your/actual/path/scripts/start_server.py"],
+      "env": {
+        "PYTHONPATH": "/your/actual/path/src"
+      }
+    }
+  }
+}
+```
+
+3. Connect Gemini CLI:
+```bash
+gemini --config gemini_config.json
 ```
 
 ## Development

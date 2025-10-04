@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "psx-scraper": {
+      "command": "python",
+      "args": ["/path/to/your/project/scripts/start_server.py"],
+      "env": {
+        "PYTHONPATH": "/path/to/your/project/src"
+      }
+    }
+  },
+  "settings": {
+    "timeout": 30000,
+    "maxRetries": 3,
+    "logLevel": "info"
+  }
+}

@@ -148,3 +148,7 @@ Thumbs.db
 *.log
 temp/
 tmp/
+
+# MCP Configuration files (keep templates, ignore actual configs)
+gemini_config.json
+mcp_config.json

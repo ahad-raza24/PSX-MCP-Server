@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "psx-scraper": {
+      "command": "python",
+      "args": ["/path/to/your/project/scripts/start_server.py"],
+      "env": {
+        "PYTHONPATH": "/path/to/your/project/src"
+      }
+    }
+  }
+}
